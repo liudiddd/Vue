@@ -1,0 +1,318 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <script src="../vue.js"></script>
+    <style>
+        .demo1 {
+            height: 50px;
+            width: 100px;
+            background-color: rgb(169, 210, 247);
+        }
+        .list {
+            height: 100px;
+            width: 150px;
+            overflow: auto;
+        }
+        .list li {
+            height: 120px;
+            width: 100px;
+            background-color: beige;
+        }
+        .basic {
+            margin: 10px 10px;
+            padding: 0;
+            width: 200px;
+            height: 100px;
+        }
+        .class1 {
+            font: bold;
+        }
+        .class2 {
+            background-color: rgb(168, 247, 144);
+        }
+        .class3 {
+            width: 198px;
+            height: 98px;
+            border: 1px solid;
+            border-radius: 10px;
+        }
+    </style>
+</head>
+<body>
+    <div id="root">
+        <input type="text" v-model="name">
+        <div>{{ name }}</div>
+        <button @click="showInfo">点我</button>
+        <button @click="showInfo2(event, 66)">点我2</button> <!-- $event属于关键词，用来将event事件传递到回调函数 -->
+        <!-- 
+            事件修饰符：
+                1.prevent：阻止默认事件（常用）；
+                2.stop：阻止事件冒泡（常用），事件只触发最近元素；
+                3.once：事件只触发一次（常用）；
+                4.capture：使用事件的捕获模式；
+                5.self：只有event.target是当前操作的元素时才能触发事件；
+                6.passive：事件的默认行为立即执行，无需等待事件回调执行完毕。
+         -->
+        <a href="http://www.baidu.com" @click.prevent="showBaidu">百度</a>
+        <div class="demo1" @click.self="showInfo"> <!-- 点击内部的button，外部的div事件不会执行，因为event.target是button，而不是div -->
+            <button @click="showInfo">事件冒泡</button>
+        </div>
+        <!-- 事件默认行为立即执行，不用等待回调函数执行完再执行默认事件，可以防止滚轮事件回调函数执行时间过长导致的卡顿 -->
+        <ul class="list" @wheel.passive="wheel">
+            <li>1</li>
+            <li>2</li>
+            <li>3</li>
+            <li>4</li>
+        </ul>
+        <!-- 
+            键盘回车键按下事件 
+            Vue中常用按键别名：
+                回车：enter
+                删除/退格：delete
+                退出：esc
+                空格：space
+                换行：tab
+                上：up
+                下：down
+                左：left
+                右：right
+        -->
+        <input type="text" @keyup.enter="enter"> <br>
+        <!-- 
+            计算属性
+         -->
+         firstname:<input type="text"  v-model="firstname"> <br>
+         lastname:<input type="text" v-model="lastname"> <br>
+         {{ fullname }} <br>
+         <div>
+             <div>今天天气很{{ info }}，偏{{ windDir }}风</div>
+             <button @click="updateWeather">更新天气</button>
+         </div>
+         <div>a: {{ numbers.a }} <button @click="adda">add</button></div>
+         <div>b: {{ numbers.b }} <button @click="addb">add</button></div>
+         <!-- 绑定class样式，字符串写法 -->
+         <div class="basic" :class="clazz" :style="styleObj">:class样式<button @click='changeClass'>修改</button></div>
+         <!-- 绑定class样式，数组写法 -->
+         <div class="basic" :class="clazzArr">:class样式<button @click='changeClassArr'>修改</button></div>
+         <!-- 绑定class样式，对象写法 -->
+         <div class="basic" :class="clazzObj">:class样式<button @click='changeClassObj'>修改</button></div>
+         <!-- 条件渲染 -->
+         <ul @click="changeShowIdx">
+             <li v-show="showIdx === 1">Angular</li>
+             <li v-show="showIdx === 2">React</li>
+             <li v-show="showIdx === 3">Vue</li>
+         </ul>
+         <!-- v-if与template的配合使用 -->
+         <template v-if="show">
+            <li>Angular</li>
+            <li>React</li>
+            <li>Vue</li>
+         </template>
+         <!-- 遍历数组 -->
+         <ul>
+             <li>查询:<input type="text" v-model="queryKey" @keyup="filter"></li>
+             <li v-for="(item, idx) in filterArr" :key="item.id">
+                 {{ item.name }}-{{ item.age }}
+             </li>
+         </ul>
+         <!-- 遍历对象 -->
+         <ul>
+             <li v-for="(v, k) of car" :key="k">
+                {{ k }}-{{ v }}
+             </li>
+         </ul>
+         <!-- vm.$set(target, key, value)动态向vue实例中添加响应式属性 -->
+         <div>Jerry朋友{{ student.friends[0].name }}-{{ student.friends[0].sex }}</div>
+    </div>
+</body>
+<script>
+    // 数据代理demo 
+    let obj = {x: 100}
+    let obj2 = {y: 200}
+    Object.defineProperty(obj2, 'x', {
+        get() {
+            return obj.x 
+        },
+        set(val) {
+            obj.x = val 
+        }
+    })
+
+    // Vue实例中出现data的属性，就是上面的数据代理原理 
+    let vm = new Vue({
+        data() {
+            return {
+                name: '尚硅谷',
+                address: '宏福科技园',
+                firstname: '',
+                lastname: '',
+                isHot: true,
+                info: '',
+                dir: '',
+                windDir: '',
+                numbers: {
+                    a: 1,
+                    b: 1
+                },
+                clazz: '',
+                clazzArr: [],
+                clazzObj: {},
+                styleObj: {
+                    fontSize: '20px',
+                    color: 'red'
+                },
+                showIdx: 1,
+                show: false,
+                personArr: [
+                    {id: '001', name: '马冬梅', age: 18},
+                    {id: '002', name: '周冬雨', age: 19},
+                    {id: '003', name: '王老五', age: 20},
+                    {id: '004', name: '王老六', age: 18},
+                ],
+                queryKey: '',
+                filterArr: [],
+                car: {
+
+                },
+                student: {
+                    name: 'Jerry',
+                    age: 19,
+                    friends: [
+                        {
+                            name: 'Poppy',
+                            age: 18
+                        }
+                    ]
+                }
+            }
+        },
+        computed: {
+            // 计算属性方法回调时机：1.初次调用，让后放缓存中；2.方法内部依赖的vue属性更新时。
+            fullname() {
+                return `${this.firstname}-${this.lastname}`
+            }
+        },
+        watch: {
+            isHot: {
+                handler(newVal, oldVal) {
+                    if(newVal === oldVal) return 
+                    this.info = newVal ? '炎热' : '凉爽' 
+                }
+            },
+            // 监视多级结构中某个属性的变化 
+            'numbers.a': {
+                handler(newVal, oldVal) {
+                    console.log('numbers.a变了')
+                }
+            },
+            // 监视多级结构中所有属性的变化，deep深度监视  
+            numbers: {
+                deep: true,
+                handler(newVal, oldVal) {
+                    console.log('numbers所有属性')
+                }
+            }
+        },
+        methods: {
+            showInfo(event) {
+                console.log(event.target.innerText)
+            },
+            showInfo2(num, event) {
+                console.log(num, event.target.innerText)
+            },
+            showBaidu(e) {
+                // e.preventDefault() // 可以使用事件修饰符@click.prevent阻止默认事件  
+                console.log('百度')
+            },
+            wheel() {
+                let a = 0;
+                for(let i = 0; i < 1000000000; i++) {
+                    a++ 
+                }
+                console.log('wheel回调函数执行完了')
+            },
+            enter(e) {
+                // if(e.keyCode != 13) return // 使用@keyCode.enter代替，作用是点击回车键时触发，其他键忽略  
+                console.log(e.target.value) // 
+            },
+            updateWeather() {
+                this.isHot = !this.isHot 
+                let arr = ['e','s','w','n']
+                this.dir = arr[Math.floor(Math.random()*4)] 
+            },
+            adda() {
+                this.numbers.a++ 
+            },
+            addb() {
+                this.numbers.b++ 
+            },
+            changeClass() {
+                if(!this.clazz)
+                    this.clazz = 'class1 class2 class3'
+                else 
+                    this.clazz = '' 
+                if(this.styleObj.fontSize === '20px')
+                    this.styleObj.fontSize = '30px'
+                else this.styleObj.fontSize = '20px'
+            },
+            changeClassArr() {
+                if(!this.clazzArr.length)
+                    this.clazzArr.push('class1','class2','class3')
+                else {
+                    this.clazzArr = [] 
+                }
+            },
+            changeClassObj() {
+                if(!Object.keys(this.clazzObj).length) {
+                    //this.clazzObj.class1 = true 
+                    //this.clazzObj.class2 = true 
+                    //this.clazzObj.class3 = true 
+                    this.clazzObj = {
+                        class1: true,
+                        class2: true,
+                        class3: true 
+                    }
+                } else {
+                    this.clazzObj = {}
+                } 
+            },
+            changeShowIdx() {
+                this.showIdx === 3 ? (this.showIdx=1) : this.showIdx++ 
+            },
+            // 数组触发模板更新条件：1.数组重新赋值；2.数组调用内置方法，如shift、push等；
+            // 数组元素直接赋值不会触发模板更新，如arr[1] = 'hello'
+            filter(event) {
+                console.log(this.queryKey)
+                if(!this.queryKey) return; 
+                this.filterArr = this.personArr.filter((item) => {
+                    return item.name.includes(this.queryKey)
+                })
+                // this.filterArr[0] = {id: '001', name: '马冬梅', age: 18}
+                // this.filterArr = [{id: '001', name: '马冬梅', age: 18}]
+                // this.filterArr.push({id: '001', name: '马冬梅', age: 18}) 
+            }
+        }
+    })
+    vm.$mount('#root')
+    console.log('vm.name', vm.name)
+    // 动态监视 
+    let dirObj = {
+        e: '东',
+        s: '南',
+        w: '西',
+        n: '北'
+    }
+    vm.$watch('dir', {
+        handler(newVal, oldVal) {
+            this.windDir = dirObj[newVal] 
+        }
+    })
+    // 动态添加响应式属性 
+    vm.$set(vm.student.friends[0], 'sex', '女')
+    console.log(vm._data.student === vm.student) // true 
+</script>
+</html>

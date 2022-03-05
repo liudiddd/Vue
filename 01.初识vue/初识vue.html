@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <script src="../vue.js"></script>
+</head>
+<body>
+    <!-- 
+        MVVM模型：
+            M（model）：data；
+            V（view）：html模板；
+            VM（view-model）：vue实例。
+            通过VM将V和M关联起来。
+     -->
+
+    <!-- 准备一个容器 -->
+    <div id="root">
+        <h1>hello {{ name }} {{ address }}</h1>
+        <a :href="url" :x="name">尚硅谷</a> <br>
+        单向数据绑定：<input type="text" :value="name"> <br>
+        双向数据绑定：<input type="text" v-model="name"> <br> 
+
+
+    </div>
+</body>
+<script>
+    Vue.config.devtools = true 
+    Vue.config.productionTip = false // 关闭控制台提示 
+
+    const vm = new Vue({
+        // el: '#root', // 指定容器 
+        //data: {
+        //    name: '尚硅谷',
+        //    address: '北京',
+        //    url: 'http://www.atguigu.com'
+        //}
+        data: function() { 
+            console.log('@@@', this) // this时Vue实例，注意不要写箭头函数，否则this指向window 
+            return {
+                name: '尚硅谷',
+                address: '北京',
+                url: 'http://atguigu.com'
+            }
+        }
+    }) 
+    console.log(vm)
+    vm.$mount('#root') 
+    
+
+
+
+
+</script>
+</html>

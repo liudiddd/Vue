@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <script src="../vue.js"></script>
+</head>
+<body>
+    <div id="root">
+        <my-school></my-school>
+        <global-component></global-component>
+    </div>
+</body>
+<script>
+    // 创建一个组件
+    const globalComponent = Vue.extend({
+        template: `
+            <div>你好，我是全局组件{{ msg }}</div>
+        `,
+        data() {
+            return {
+                msg: '芭比q'
+            }
+        }
+    })
+    const school = Vue.extend({
+        template: `
+            <div>{{ name }}欢迎你的加入</div>
+        `,
+        data() {
+            return {
+                name: '尚硅谷学校'
+            }
+        }
+    })
+    // 注册为全局组件
+    Vue.component('GlobalComponent', globalComponent) 
+
+    const vm = new Vue({
+        el: '#root',
+        data() {
+            return {
+
+            }
+        },
+        // 注册局部组件 
+        components: {
+            MySchool: school  
+        }
+    })
+
+</script>
+</html>

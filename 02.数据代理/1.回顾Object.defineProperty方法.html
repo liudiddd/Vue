@@ -1,0 +1,34 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+</head>
+<body>
+    
+</body>
+<script>
+    let num = 19 
+    let person = {
+        name: '张三',
+        gender: '男',
+        // age: 18
+    }
+    Object.defineProperty(person, 'age', {
+        __num: 10,
+        // value: 18,
+        // writable: true, // 是否可赋值，默认false 
+        enumerable: true, // 是否可枚举，默认false，枚举属性名：Object.keys(person) 
+        configurable: true, // 是否可删除，默认false 
+        get() {
+            console.log('读取age')
+            return this.__num 
+        },
+        set(val) {
+            this.__num = val 
+        }
+    })
+</script>
+</html>
